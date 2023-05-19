@@ -2,8 +2,8 @@ const canvas = document.getElementById('game')
 const c = canvas.getContext('2d');
 
 
-const tileCount = 20;
-const tileSize = canvas.height / tileCount
+const TILE_COUNT = 20;
+const TILE_SIZE = canvas.clientHeight / TILE_COUNT
 
 var fps = 15;
 let timeNow;
@@ -12,12 +12,18 @@ let timeInterval = 1000 / fps;
 let timeDelta;
 
 
-
+class SnakeNode {
+  constructor({next, color}) {
+    this.next = next
+    this.color = color
+  }
+}
 
 class Snake {
-  constructor({x, y}) {
+  constructor({x, y, color}) {
     this.x = x
     this.y = y
+    this.color = color
     this.velocity = {x: 0, y: 0}
     
   }
@@ -45,7 +51,7 @@ class Snake {
 
   draw() {
     c.fillStyle = "orange"
-    c.fillRect(this.x * tileCount, this.y * tileCount, tileSize , tileSize)
+    c.fillRect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
   }
 
   update() {
@@ -68,19 +74,14 @@ class Food {
 
   draw() {
     c.fillStyle = "red"
-    //c.fillRect(this.x)
+    c.fillRect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE, TILE_SIZE)
   }
 }
 
 
-const snake = new Snake({x: 10, y: 10})
+const snake = new Snake({x: 10, y: 10, color: 'hsl(24, 100%, 50%)'})
+const food = []
 
-function drawGame(){
-  clearScreen();
-  
-  snake.update()
-  
-}
 
 function clearScreen(){
   c.fillStyle= 'black'// make screen black
@@ -88,7 +89,7 @@ function clearScreen(){
 }
 
 
-
+let frame = 0
 let animationFrame = 0
 function animate() {
   animationFrame = requestAnimationFrame(animate)
@@ -96,12 +97,32 @@ function animate() {
   // once the difference between then and now >= the interval, animate
   timeNow = Date.now();
   timeDelta = timeNow - timeThen;
+  // frame
   if (timeDelta > timeInterval) {
       // get rid of the extra time that remains in delta
       timeThen = timeNow - (timeDelta % timeInterval)
-
+      frame += 1
       // ANIMATE
-      drawGame()
+
+      if (frame % 20 == 0) {
+        spawnFood()
+      }
+
+      clearScreen()
+      snake.update()
+
+      food.forEach((f, fIndex) => {
+
+        if (f.x == snake.x && f.y == snake.y) {
+          setTimeout(() => {
+            food.splice(fIndex, 1)
+          }, 0)
+        }else {
+          f.draw()
+
+        }
+
+      })
       
       
   }
@@ -114,3 +135,12 @@ animate()
 document.addEventListener("keydown", (e) => {
   snake.changeDirection(e)
 })
+
+function spawnFood() {
+  console.log("spawning food")
+  let x = Math.trunc(Math.random() * TILE_COUNT)
+  let y = Math.trunc(Math.random() * TILE_COUNT)
+
+  const color = `hsl(0, 50%, 50%)` // template literal
+  food.push(new Food({x, y, color}))
+}
