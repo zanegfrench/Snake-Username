@@ -13,9 +13,12 @@ let timeDelta;
 
 
 class SnakeNode {
-  constructor({next, color}) {
+  constructor({x, y, next, color}) {
+    this.x = x
+    this.y = y
     this.next = next
     this.color = color
+    
   }
 }
 
@@ -25,7 +28,7 @@ class Snake {
     this.y = y
     this.color = color
     this.velocity = {x: 0, y: 0}
-    
+    this.head = new SnakeNode({next: null, color: this.color})
   }
 
   changeDirection(e) {
@@ -51,13 +54,26 @@ class Snake {
 
   draw() {
     c.fillStyle = "orange"
-    c.fillRect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
+
+    currentNode = this.head
+    while (currentNode) {
+      c.fillRect(currentNode.x * TILE_COUNT, currentNode.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
+      currentNode = currentNode.next
+    }
   }
 
   update() {
 
-    this.x += this.velocity.x
-    this.y += this.velocity.y
+    this.head.x += this.velocity.x
+    this.head.y += this.velocity.y
+
+    let currentNode = this.head
+
+    while (currentNode.next) {
+      currentNode.next.x = currentNode.x
+      currentNode.next.y = currentNode.y
+      currentNode = currentNode.next
+    }
 
     this.draw()
   }
