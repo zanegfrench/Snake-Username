@@ -36,59 +36,73 @@ class Snake {
     this.y = y
     this.color = color
     this.velocity = {x: 1, y: 0}
-    this.nodes = []
-    this.nodes.push(new SnakeNode({x: this.x, y: this.y, color: this.color}))
+    this.head = new SnakeNode({x: this.x, y: this.y, color: this.color})
+    this.tail = []
   }
 
   addNode() {
-    this.nodes.push(new SnakeNode({x: 0, y: 0, color: this.color}))
+    this.tail.push(new SnakeNode({x: 0, y: 0, color: this.color}))
   }
 
   changeDirection(e) {
     // up
     if(e.key == "w") {
+      if (this.velocity.y === 1) {
+        return
+      }
       this.velocity.x = 0
       this.velocity.y = -1 
     }
     //down
     if(e.key == "s") {
+      if (this.velocity.y === -1) {
+        return
+      }
       this.velocity.x = 0
       this.velocity.y = 1 
     }
     //left
     if(e.key == "a") {
+      if (this.velocity.x === 1) {
+        return
+      }
       this.velocity.x = -1 
       this.velocity.y = 0
     }
     //right
     if(e.key == "d") {
+      if (this.velocity.x === -1) {
+        return
+      }
       this.velocity.x = 1
       this.velocity.y = 0
     }
   }
 
   draw() {
-
-    this.nodes.forEach((node) => {
+    this.head.draw()
+    this.tail.forEach((node) => {
       node.draw()
     })
   }
 
   update() {
 
-    let prevX = this.nodes[0].x
-    let prevY = this.nodes[0].y
+    let prevX = this.head.x
+    let prevY = this.head.y
 
-    for (let i = 1; i < this.nodes.length; i++) {
-      let tempX = this.nodes[i].x
-      let tempY = this.nodes[i].y
-      this.nodes[i].x = prevX
-      this.nodes[i].y = prevY
+
+    this.tail.forEach((tailPiece) => {
+      let tempX = tailPiece.x
+      let tempY = tailPiece.y
+      tailPiece.x = prevX
+      tailPiece.y = prevY
       prevX = tempX
       prevY = tempY
-    }
-    this.nodes[0].x += this.velocity.x
-    this.nodes[0].y += this.velocity.y
+    })
+
+    this.head.x += this.velocity.x
+    this.head.y += this.velocity.y
 
     this.draw()
   }
@@ -149,7 +163,7 @@ function animate() {
       snake.update()
 
       food.forEach((f, fIndex) => {
-        if (f.x == snake.nodes[0].x && f.y == snake.nodes[0].y) {
+        if (f.x == snake.head.x && f.y == snake.head.y) {
           snake.addNode()
 
           setTimeout(() => {
