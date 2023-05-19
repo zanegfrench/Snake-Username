@@ -5,7 +5,7 @@ const c = canvas.getContext('2d');
 const TILE_COUNT = 20;
 const TILE_SIZE = canvas.clientHeight / TILE_COUNT
 
-var fps = 15;
+var fps = 10;
 let timeNow;
 let timeThen = Date.now();
 let timeInterval = 1000 / fps;
@@ -20,6 +20,15 @@ class SnakeNode {
     this.color = color
     
   }
+
+  draw() {
+    c.beginPath()
+    c.rect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
+    c.fillStyle = this.color
+    c.strokeStyle = "black"
+    c.fill()
+    c.stroke()
+  }
 }
 
 class Snake {
@@ -28,7 +37,13 @@ class Snake {
     this.y = y
     this.color = color
     this.velocity = {x: 0, y: 0}
-    this.head = new SnakeNode({next: null, color: this.color})
+    this.head = new SnakeNode({x: 10, y: 10, next: null, color: this.color})
+    this.head.next = new SnakeNode({x: 11, y: 11, next: null, color: this.color})
+  }
+
+  addNode(node) {
+    node.next = this.head
+    this.head = node
   }
 
   changeDirection(e) {
@@ -53,19 +68,15 @@ class Snake {
   }
 
   draw() {
-    c.fillStyle = "orange"
 
-    currentNode = this.head
+    let currentNode = this.head
     while (currentNode) {
-      c.fillRect(currentNode.x * TILE_COUNT, currentNode.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
+      currentNode.draw()
       currentNode = currentNode.next
     }
   }
 
   update() {
-
-    this.head.x += this.velocity.x
-    this.head.y += this.velocity.y
 
     let currentNode = this.head
 
@@ -74,7 +85,8 @@ class Snake {
       currentNode.next.y = currentNode.y
       currentNode = currentNode.next
     }
-
+    this.head.x += this.velocity.x
+    this.head.y += this.velocity.y
     this.draw()
   }
 
