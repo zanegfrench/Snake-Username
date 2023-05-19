@@ -13,10 +13,9 @@ let timeDelta;
 
 
 class SnakeNode {
-  constructor({x, y, next, color}) {
+  constructor({x, y, color}) {
     this.x = x
     this.y = y
-    this.next = next
     this.color = color
   }
 
@@ -37,14 +36,12 @@ class Snake {
     this.y = y
     this.color = color
     this.velocity = {x: 1, y: 0}
-    this.head = new SnakeNode({x: this.x, y: this.y, next: null, color: this.color})
-    //this.addNode()
-    //this.addNode()
+    this.nodes = []
+    this.nodes.push(new SnakeNode({x: this.x, y: this.y, color: this.color}))
   }
 
   addNode() {
-    let node = new SnakeNode({x: this.head.x + this.velocity.x, y: this.head.y + this.velocity.y, next: this.head, color: this.color})
-    this.head = node
+    this.nodes.push(new SnakeNode({x: 0, y: 0, color: this.color}))
   }
 
   changeDirection(e) {
@@ -71,33 +68,28 @@ class Snake {
   }
 
   draw() {
-    let currentNode = this.head
-    let nodes = 0
-    while (currentNode) {
-      console.log(currentNode)
-      currentNode.draw()
-      currentNode = currentNode.next
-      nodes += 1
-    }
-    console.log(nodes)
+
+    this.nodes.forEach((node) => {
+      node.draw()
+    })
   }
 
   update() {
 
-    let currentNode = this.head
-    let prevX = currentNode.x
-    let prevY = currentNode.y
-    while (currentNode.next) {
-      let tempX = currentNode.next.x
-      let tempY = currentNode.next.y
-      currentNode.next.x = prevX
-      currentNode.next.y = prevY
+    let prevX = this.nodes[0].x
+    let prevY = this.nodes[0].y
+
+    for (let i = 1; i < this.nodes.length; i++) {
+      let tempX = this.nodes[i].x
+      let tempY = this.nodes[i].y
+      this.nodes[i].x = prevX
+      this.nodes[i].y = prevY
       prevX = tempX
       prevY = tempY
-      currentNode = currentNode.next
     }
-    this.head.x += this.velocity.x
-    this.head.y += this.velocity.y
+    this.nodes[0].x += this.velocity.x
+    this.nodes[0].y += this.velocity.y
+
     this.draw()
   }
 
@@ -157,7 +149,7 @@ function animate() {
       snake.update()
 
       food.forEach((f, fIndex) => {
-        if (f.x == snake.head.x && f.y == snake.head.y) {
+        if (f.x == snake.nodes[0].x && f.y == snake.nodes[0].y) {
           snake.addNode()
 
           setTimeout(() => {
