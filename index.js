@@ -18,11 +18,11 @@ class SnakeNode {
     this.y = y
     this.next = next
     this.color = color
-    
   }
 
   draw() {
     c.beginPath()
+    c.lineWidth = 1
     c.rect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
     c.fillStyle = this.color
     c.strokeStyle = "black"
@@ -36,53 +36,64 @@ class Snake {
     this.x = x
     this.y = y
     this.color = color
-    this.velocity = {x: 0, y: 0}
-    this.head = new SnakeNode({x: 10, y: 10, next: null, color: this.color})
-    this.head.next = new SnakeNode({x: 11, y: 11, next: null, color: this.color})
+    this.velocity = {x: 1, y: 0}
+    this.head = new SnakeNode({x: this.x, y: this.y, next: null, color: this.color})
+    //this.addNode()
+    //this.addNode()
   }
 
-  addNode(node) {
-    node.next = this.head
+  addNode() {
+    let node = new SnakeNode({x: this.head.x + this.velocity.x, y: this.head.y + this.velocity.y, next: this.head, color: this.color})
     this.head = node
   }
 
   changeDirection(e) {
-    this.velocity.x = 0
-    this.velocity.y = 0
     // up
     if(e.key == "w") {
+      this.velocity.x = 0
       this.velocity.y = -1 
     }
     //down
     if(e.key == "s") {
+      this.velocity.x = 0
       this.velocity.y = 1 
     }
     //left
     if(e.key == "a") {
       this.velocity.x = -1 
+      this.velocity.y = 0
     }
     //right
     if(e.key == "d") {
       this.velocity.x = 1
+      this.velocity.y = 0
     }
   }
 
   draw() {
-
     let currentNode = this.head
+    let nodes = 0
     while (currentNode) {
+      console.log(currentNode)
       currentNode.draw()
       currentNode = currentNode.next
+      nodes += 1
     }
+    console.log(nodes)
   }
 
   update() {
 
     let currentNode = this.head
-
+    let prevX = currentNode.x
+    let prevY = currentNode.y
     while (currentNode.next) {
-      currentNode.next.x = currentNode.x
-      currentNode.next.y = currentNode.y
+      let tempX = currentNode.next.x
+      let tempY = currentNode.next.y
+      currentNode.next.x = prevX
+      currentNode.next.y = prevY
+      prevX = tempX
+      prevY = tempY
       currentNode = currentNode.next
     }
     this.head.x += this.velocity.x
@@ -98,11 +109,17 @@ class Food {
     this.x = x
     this.y = y
     this.char = char
+    this.color = "red"
   }
 
   draw() {
-    c.fillStyle = "red"
-    c.fillRect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE, TILE_SIZE)
+    c.beginPath()
+    c.lineWidth = 1
+    c.rect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
+    c.fillStyle = this.color
+    c.strokeStyle = "black"
+    c.fill()
+    c.stroke()
   }
 }
 
@@ -140,8 +157,9 @@ function animate() {
       snake.update()
 
       food.forEach((f, fIndex) => {
+        if (f.x == snake.head.x && f.y == snake.head.y) {
+          snake.addNode()
 
-        if (f.x == snake.x && f.y == snake.y) {
           setTimeout(() => {
             food.splice(fIndex, 1)
           }, 0)
@@ -165,7 +183,6 @@ document.addEventListener("keydown", (e) => {
 })
 
 function spawnFood() {
-  console.log("spawning food")
   let x = Math.trunc(Math.random() * TILE_COUNT)
   let y = Math.trunc(Math.random() * TILE_COUNT)
 
