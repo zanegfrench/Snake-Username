@@ -4,6 +4,7 @@ const c = canvas.getContext('2d');
 
 const TILE_COUNT = 20;
 const TILE_SIZE = canvas.clientHeight / TILE_COUNT
+const CHARACTERS = "abcdefghijklmnopqrstuvwxyz"
 
 var fps = 10;
 let timeNow;
@@ -13,10 +14,11 @@ let timeDelta;
 
 
 class SnakeNode {
-  constructor({x, y, color}) {
+  constructor({x, y, color, char}) {
     this.x = x
     this.y = y
     this.color = color
+    this.char = char
   }
 
   draw() {
@@ -27,6 +29,11 @@ class SnakeNode {
     c.strokeStyle = "black"
     c.fill()
     c.stroke()
+
+    c.font = `${TILE_SIZE}px Ariel`
+    c.fillStyle = "white"
+    c.textAlign = "center"
+    c.fillText(this.char, (this.x + .5) * TILE_COUNT, (this.y) * TILE_COUNT + TILE_SIZE - 2, TILE_SIZE)
   }
 }
 
@@ -36,12 +43,12 @@ class Snake {
     this.y = y
     this.color = color
     this.velocity = {x: 1, y: 0}
-    this.head = new SnakeNode({x: this.x, y: this.y, color: this.color})
+    this.head = new SnakeNode({x: this.x, y: this.y, color: this.color, char: ' '})
     this.tail = []
   }
 
-  addNode() {
-    this.tail.push(new SnakeNode({x: 0, y: 0, color: this.color}))
+  addNode({char}) {
+    this.tail.push(new SnakeNode({x: 0, y: 0, color: this.color, char: char}))
   }
 
   changeDirection(e) {
@@ -126,11 +133,16 @@ class Food {
     c.strokeStyle = "black"
     c.fill()
     c.stroke()
+
+    c.font = `${TILE_SIZE}px Ariel`
+    c.fillStyle = "white"
+    c.textAlign = "center"
+    c.fillText(this.char, (this.x + .5) * TILE_COUNT, (this.y) * TILE_COUNT + TILE_SIZE - 2, TILE_SIZE)
   }
 }
 
 
-const snake = new Snake({x: 10, y: 10, color: 'hsl(24, 100%, 50%)'})
+const snake = new Snake({x: 10, y: 10, color: 'green'})
 const food = []
 
 
@@ -162,9 +174,10 @@ function animate() {
       clearScreen()
       snake.update()
 
+      // FOOD COLLISION
       food.forEach((f, fIndex) => {
         if (f.x == snake.head.x && f.y == snake.head.y) {
-          snake.addNode()
+          snake.addNode({char: f.char})
 
           setTimeout(() => {
             food.splice(fIndex, 1)
@@ -174,6 +187,19 @@ function animate() {
 
         }
 
+      })
+
+      // SNAKE COLLISION
+      if (snake.head.x < 0 || snake.head.x >= TILE_COUNT || snake.head.y < 0 || snake.head.y >= TILE_COUNT) {
+        // GAME OVER
+        console.log('GAME OVER')
+      }
+      snake.tail.forEach(tailPiece => {
+        if (snake.head.x == tailPiece.x && snake.head.y == tailPiece.y) {
+          // GAME OVER
+          console.log('GAME OVER')
+
+        }
       })
       
       
@@ -189,9 +215,10 @@ document.addEventListener("keydown", (e) => {
 })
 
 function spawnFood() {
-  let x = Math.trunc(Math.random() * TILE_COUNT)
-  let y = Math.trunc(Math.random() * TILE_COUNT)
+  const x = Math.trunc(Math.random() * TILE_COUNT)
+  const y = Math.trunc(Math.random() * TILE_COUNT)
+  const character = CHARACTERS.charAt(Math.trunc(Math.random() * CHARACTERS.length))
 
   const color = `hsl(0, 50%, 50%)` // template literal
-  food.push(new Food({x, y, color}))
+  food.push(new Food({x, y, color, char: character}))
 }
