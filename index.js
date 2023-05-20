@@ -1,9 +1,13 @@
 const canvas = document.getElementById('game')
 const c = canvas.getContext('2d');
 
-
 const TILE_COUNT = 20;
-const TILE_SIZE = canvas.clientHeight / TILE_COUNT
+const SIDE_LENGTH = Math.floor(Math.min(window.innerHeight, window.innerWidth) / TILE_COUNT) * TILE_COUNT
+const TILE_SIZE = SIDE_LENGTH / TILE_COUNT
+
+canvas.height = SIDE_LENGTH
+canvas.width = SIDE_LENGTH
+
 const CHARACTERS = "abcdefghijklmnopqrstuvwxyz"
 
 var fps = 10;
@@ -24,7 +28,7 @@ class SnakeNode {
   draw() {
     c.beginPath()
     c.lineWidth = 1
-    c.rect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
+    c.rect(this.x * TILE_SIZE, this.y * TILE_SIZE, TILE_SIZE , TILE_SIZE)
     c.fillStyle = this.color
     c.strokeStyle = "black"
     c.fill()
@@ -33,7 +37,7 @@ class SnakeNode {
     c.font = `${TILE_SIZE}px Ariel`
     c.fillStyle = "white"
     c.textAlign = "center"
-    c.fillText(this.char, (this.x + .5) * TILE_COUNT, (this.y) * TILE_COUNT + TILE_SIZE - 2, TILE_SIZE)
+    c.fillText(this.char, (this.x + .5) * TILE_SIZE, (this.y) * TILE_SIZE + TILE_SIZE - 2, TILE_SIZE)
   }
 }
 
@@ -128,7 +132,7 @@ class Food {
   draw() {
     c.beginPath()
     c.lineWidth = 1
-    c.rect(this.x * TILE_COUNT, this.y * TILE_COUNT, TILE_SIZE , TILE_SIZE)
+    c.rect(this.x * TILE_SIZE, this.y * TILE_SIZE, TILE_SIZE , TILE_SIZE)
     c.fillStyle = this.color
     c.strokeStyle = "black"
     c.fill()
@@ -137,7 +141,7 @@ class Food {
     c.font = `${TILE_SIZE}px Ariel`
     c.fillStyle = "white"
     c.textAlign = "center"
-    c.fillText(this.char, (this.x + .5) * TILE_COUNT, (this.y) * TILE_COUNT + TILE_SIZE - 2, TILE_SIZE)
+    c.fillText(this.char, (this.x + .5) * TILE_SIZE, (this.y) * TILE_SIZE + TILE_SIZE - 2, TILE_SIZE)
   }
 }
 
