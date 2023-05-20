@@ -154,6 +154,7 @@ function clearScreen(){
 
 let frame = 0
 let animationFrame = 0
+let gameOver = false
 function animate() {
   animationFrame = requestAnimationFrame(animate)
   // control frame rate
@@ -162,49 +163,40 @@ function animate() {
   timeDelta = timeNow - timeThen;
   // frame
   if (timeDelta > timeInterval) {
-      // get rid of the extra time that remains in delta
-      timeThen = timeNow - (timeDelta % timeInterval)
-      frame += 1
-      // ANIMATE
+    // get rid of the extra time that remains in delta
+    timeThen = timeNow - (timeDelta % timeInterval)
+    frame += 1
+    // ANIMATE
 
-      if (frame % 20 == 0) {
-        spawnFood()
+    if (frame % 20 == 0) {
+      spawnFood()
+    }
+
+    clearScreen()
+    snake.update()
+
+    // FOOD COLLISION
+    food.forEach((f, fIndex) => {
+      if (f.x == snake.head.x && f.y == snake.head.y) {
+        snake.addNode({char: f.char})
+
+        setTimeout(() => {
+          food.splice(fIndex, 1)
+        }, 0)
+      }else {
+        f.draw()
+
       }
 
-      clearScreen()
-      snake.update()
+    })
 
-      // FOOD COLLISION
-      food.forEach((f, fIndex) => {
-        if (f.x == snake.head.x && f.y == snake.head.y) {
-          snake.addNode({char: f.char})
-
-          setTimeout(() => {
-            food.splice(fIndex, 1)
-          }, 0)
-        }else {
-          f.draw()
-
-        }
-
-      })
-
-      // SNAKE COLLISION
-      if (snake.head.x < 0 || snake.head.x >= TILE_COUNT || snake.head.y < 0 || snake.head.y >= TILE_COUNT) {
-        // GAME OVER
-        console.log('GAME OVER')
-      }
-      snake.tail.forEach(tailPiece => {
-        if (snake.head.x == tailPiece.x && snake.head.y == tailPiece.y) {
-          // GAME OVER
-          console.log('GAME OVER')
-
-        }
-      })
-      
-      
+    gameOver = isGameOver()
+    
+    
+    if (gameOver) {
+      cancelAnimationFrame(animationFrame)
+    }
   }
-  
 }
 
 
@@ -221,4 +213,23 @@ function spawnFood() {
 
   const color = `hsl(0, 50%, 50%)` // template literal
   food.push(new Food({x, y, color, char: character}))
+}
+
+function isGameOver() {
+  let gameOver = false
+  if (snake.head.x < 0 || snake.head.x === TILE_COUNT || snake.head.y < 0 || snake.head.y === TILE_COUNT) {
+    gameOver = true
+  }
+
+  //stop the game when snake bumps into itself
+  snake.tail.forEach(tailPiece => {
+    console.log("TAILPIECE: " + tailPiece.x)
+    console.log("HEAD: " + snake.head.x)
+    if (snake.head.x === tailPiece.x && snake.head.y === tailPiece.y) {
+      gameOver = true
+      
+    }
+  })
+
+  return gameOver;
 }
