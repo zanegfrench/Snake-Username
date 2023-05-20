@@ -173,10 +173,6 @@ function animate() {
     frame += 1
     // ANIMATE
 
-    if (frame % 20 == 0) {
-      spawnFood()
-    }
-
     clearScreen()
     snake.update()
 
@@ -187,6 +183,7 @@ function animate() {
 
         setTimeout(() => {
           food.splice(fIndex, 1)
+          spawnFood(f.char)
         }, 0)
       }else {
         f.draw()
@@ -217,12 +214,15 @@ let food = []
 function init() {
   snake = new Snake({x: 10, y: 10, color: 'green'})
   food = []
+  for (let i = 0; i < CHARACTERS.length; i++) {
+    spawnFood(CHARACTERS.charAt(i))
+  }
 }
 
-function spawnFood() {
+function spawnFood(character) {
   const x = Math.trunc(Math.random() * TILE_COUNT)
   const y = Math.trunc(Math.random() * TILE_COUNT)
-  const character = CHARACTERS.charAt(Math.trunc(Math.random() * CHARACTERS.length))
+  //const character = CHARACTERS.charAt(Math.trunc(Math.random() * CHARACTERS.length))
 
   const color = `hsl(0, 50%, 50%)` // template literal
   food.push(new Food({x, y, color, char: character}))
