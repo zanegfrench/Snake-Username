@@ -10,9 +10,10 @@ canvas.width = SIDE_LENGTH
 
 const CHARACTERS = "abcdefghijklmnopqrstuvwxyz"
 
+const registrationFormEl = document.querySelector("#registrationFormEl")
 const startGameBtn = document.querySelector("#startGameBtn")
 const modalEl = document.querySelector("#modalEl")
-const nameEl = document.querySelector('#nameEl')
+const usernameEl = document.querySelector('#usernameEl')
 
 var fps = 10;
 let timeNow;
@@ -203,9 +204,10 @@ function animate() {
       snake.tail.forEach((tailPiece) => {
         finalName += tailPiece.char
       })
-      nameEl.innerHTML = finalName
-      modalEl.style.display = 'flex'
+      usernameEl.value = finalName
+      registrationFormEl.classList.remove("invisible")
       isGameStarted = false
+      document.removeEventListener("keydown", snakeMovement)
     }
   }
 }
@@ -243,20 +245,23 @@ function isGameOver() {
   return gameOver;
 }
 
-document.addEventListener("keydown", (e) => {
 
+//document.addEventListener("keydown", snakeMovement)
+function snakeMovement(e) {
   if (!isGameStarted) {
     isGameStarted = true
     init()
     animate()
-  
-    modalEl.style.display = 'none'
+    modalEl.classList.add("invisible")
   }
-
   snake.changeDirection(e)
+}
 
-})
-
-
+usernameEl.addEventListener("click", usernameClick)
+function usernameClick(e) {
+  registrationFormEl.classList.add("invisible")
+  modalEl.classList.remove("invisible")
+  document.addEventListener("keydown", snakeMovement)
+}
 
 let isGameStarted = false

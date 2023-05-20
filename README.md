@@ -1,7 +1,8 @@
 # Snake-Username
 
 Todo:
-- [ ] Base Snake Game
-- [ ] Letters to snake
+- [x] Base Snake Game
+- [x] Letters to snake
 - [ ] Integrate with a registration form
+- [ ] Improve game for selecting a name (more letters shown at a time)
 

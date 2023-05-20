@@ -13,9 +13,30 @@
  
  }
  </style>
+<div class="fixed inset-0 flex items-center justify-center" id="registrationFormEl">
+  <div class="bg-white max-w-md w-full p-6 text-center rounded-lg">
+    <h1 class="text-4xl font-bold leading-none p-6"> Create an Account </h1>
+    <div class="text-lg">
+      <div>
+        <input id="usernameEl"class="placeholder:text-center text-center"type="text" placeholder="Choose a Username" name="uname" readonly required><br>
+      </div>
+      <div>
+        <input class="placeholder:text-center text-center" type="password" placeholder="Password" name="psw" required>
+      </div>
+      <button class="bg-blue-500 text-lg text-white w-full py-3 rounded-lg mt-4">
+        Register
+      </button>
+    </div>
+    <span>
+
+    </span>
+  </div>
+
+</div>
 
 
-<div class="fixed inset-0 flex items-center justify-center" id="modalEl">
+
+<div class="fixed inset-0 flex items-center justify-center invisible" id="modalEl">
   <div class="bg-white max-w-md w-full p-6 text-center rounded-lg">
     <h1 class="text-4xl font-bold leading-none" id="nameEl"></h1>
     <div>
