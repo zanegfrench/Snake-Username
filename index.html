@@ -1,6 +1,4 @@
 <script src="https://cdn.tailwindcss.com"></script>
-
-
 <style>
   body{
   margin: 0px;
@@ -16,20 +14,21 @@
  }
  </style>
 
-<canvas id="game" width="400" height="400"/>
 
 <div class="fixed inset-0 flex items-center justify-center" id="modalEl">
-  <div class="bg-white max-w-md w-full p-6 text-center">
-    <h1 class="text-4xl font-bold leading-none" id="bigScoreEl">0</h1>
-    <p class="text-sm text-gray-700 mb-4">Points</p>
+  <div class="bg-white max-w-md w-full p-6 text-center rounded-lg">
+    <h1 class="text-4xl font-bold leading-none" id="nameEl"></h1>
     <div>
       <button 
-        class="bg-blue-500 text-sm text-white w-full py-3 rounded-full"
+        class="bg-blue-500 text-lg text-white w-full py-3 rounded-lg"
         id="startGameBtn"
-      >Start Game</button>
+      >Use WASD</button>
     </div>
   </div>
 </div>
+
+<canvas id="game" width="400" height="400"/>
+
 
 
 

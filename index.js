@@ -1,5 +1,5 @@
 const canvas = document.getElementById('game')
-const c = canvas.getContext('2d');
+const c = canvas.getContext('2d')
 
 const TILE_COUNT = 20;
 const SIDE_LENGTH = Math.floor(Math.min(window.innerHeight, window.innerWidth) / TILE_COUNT) * TILE_COUNT
@@ -9,6 +9,10 @@ canvas.height = SIDE_LENGTH
 canvas.width = SIDE_LENGTH
 
 const CHARACTERS = "abcdefghijklmnopqrstuvwxyz"
+
+const startGameBtn = document.querySelector("#startGameBtn")
+const modalEl = document.querySelector("#modalEl")
+const nameEl = document.querySelector('#nameEl')
 
 var fps = 10;
 let timeNow;
@@ -146,16 +150,12 @@ class Food {
 }
 
 
-const snake = new Snake({x: 10, y: 10, color: 'green'})
-const food = []
-
-
 function clearScreen(){
   c.fillStyle= 'black'// make screen black
   c.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight)// black color start from 0px left, right to canvas width and canvas height
 }
 
-
+clearScreen()
 let frame = 0
 let animationFrame = 0
 let gameOver = false
@@ -199,16 +199,23 @@ function animate() {
     
     if (gameOver) {
       cancelAnimationFrame(animationFrame)
+      let finalName = ""
+      snake.tail.forEach((tailPiece) => {
+        finalName += tailPiece.char
+      })
+      nameEl.innerHTML = finalName
+      modalEl.style.display = 'flex'
+      isGameStarted = false
     }
   }
 }
 
-
-animate()
-
-document.addEventListener("keydown", (e) => {
-  snake.changeDirection(e)
-})
+let snake = new Snake({x: 10, y: 10, color: 'green'})
+let food = []
+function init() {
+  snake = new Snake({x: 10, y: 10, color: 'green'})
+  food = []
+}
 
 function spawnFood() {
   const x = Math.trunc(Math.random() * TILE_COUNT)
@@ -227,8 +234,6 @@ function isGameOver() {
 
   //stop the game when snake bumps into itself
   snake.tail.forEach(tailPiece => {
-    console.log("TAILPIECE: " + tailPiece.x)
-    console.log("HEAD: " + snake.head.x)
     if (snake.head.x === tailPiece.x && snake.head.y === tailPiece.y) {
       gameOver = true
       
@@ -237,3 +242,21 @@ function isGameOver() {
 
   return gameOver;
 }
+
+document.addEventListener("keydown", (e) => {
+
+  if (!isGameStarted) {
+    isGameStarted = true
+    init()
+    animate()
+  
+    modalEl.style.display = 'none'
+  }
+
+  snake.changeDirection(e)
+
+})
+
+
+
+let isGameStarted = false
